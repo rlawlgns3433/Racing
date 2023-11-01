@@ -33,10 +33,10 @@ public class GameDirector : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(0.05f);
 
-            if (m_myCar.GetComponent<PlayerContoller>().velocity == vel) continue;
+            if (m_myCar.GetComponent<PlayerController>().velocity == vel) continue;
 
-            string formattedVelocity = m_myCar.GetComponent<PlayerContoller>().velocity.ToString("F2");
-            m_Car_DashBoard.text = formattedVelocity + " / " + this.m_max_velocity + "\n" + m_myCar.GetComponent<PlayerContoller>().axiss;
+            string formattedVelocity = m_myCar.GetComponent<PlayerController>().velocity.ToString("F2");
+            m_Car_DashBoard.text = formattedVelocity + " / " + this.m_max_velocity + "\n" + m_myCar.GetComponent<PlayerController>().axiss;
 
 
         }

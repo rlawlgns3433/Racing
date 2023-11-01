@@ -4,36 +4,14 @@ using UnityEngine;
 using Assets.Interfaces;
 using System;
 
-//public class CarInfo : CarMovable
-//{
-//    public float m_CurrentCarSpeed;
-//    public float m_MaximumCarSpeed;
-
-//    public void CarInGrass()
-//    {
-
-//    }
-
-//    public void CarInSand()
-//    {
-
-//    }
-
-//    public void CarMove()
-//    {
-
-//    }
-//}
-
-public class PlayerContoller : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     // 휠콜라이더 4개
     public WheelCollider[] wheels = new WheelCollider[4];
     // 차량 모델의 바퀴 부분 4개
     GameObject[] wheelMesh = new GameObject[4];
 
-    [SerializeField]
-    private float power = 200.0f; // 바퀴를 회전시킬 힘
+    public float power = 200.0f; // 바퀴를 회전시킬 힘
     public float rot = -45f; // 바퀴의 회전 각도
     Rigidbody rb;
 
@@ -41,8 +19,6 @@ public class PlayerContoller : MonoBehaviour
     /// test axis
     /// </summary>
     public float axiss;
-
-
 
     private Vector3 oldPosition;
     private Vector3 currentPosition;
@@ -72,8 +48,13 @@ public class PlayerContoller : MonoBehaviour
     private void FixedUpdate()
     {
         WheelPosAndAni();
+        MovingMachanism();
+        
+    }
 
-        if(Input.GetAxis("Vertical") != 0)
+    public void MovingMachanism()
+    {
+        if (Input.GetAxis("Vertical") != 0)
         {
             for (int i = 0; i < wheels.Length; i++)
             {
@@ -82,13 +63,13 @@ public class PlayerContoller : MonoBehaviour
                 rb.velocity *= 1.001f;
             }
         }
-        else if(Input.GetAxis("Vertical") == 0)
+        else if (Input.GetAxis("Vertical") == 0)
         {
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
                 wheels[i].motorTorque = Input.GetAxis("Vertical") * power * Time.deltaTime;
-                rb.velocity *= 0.999f ;
+                rb.velocity *= 0.999f;
             }
         }
         for (int i = 2; i < 4; i++)
