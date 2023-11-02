@@ -12,9 +12,9 @@ public class PlayerController : MonoBehaviour
     GameObject[] wheelMesh = new GameObject[4];
 
     public float power = 200.0f; // 바퀴를 회전시킬 힘
-    public float rot = -45f; // 바퀴의 회전 각도
+    public float rot = 0; // 바퀴의 회전 각도
     Rigidbody rb;
-
+    
     /// <summary>
     /// test axis
     /// </summary>
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        rot = 45f;
         rb = GetComponent<Rigidbody>();
         // 무게 중심을 y축 아래방향으로 낮춘다.
         rb.centerOfMass = new Vector3(0, -1, 0);
@@ -49,9 +50,8 @@ public class PlayerController : MonoBehaviour
     {
         WheelPosAndAni();
         MovingMachanism();
-        
     }
-
+    
     public void MovingMachanism()
     {
         if (Input.GetAxis("Vertical") != 0)
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                wheels[i].motorTorque = Input.GetAxis("Vertical") * power * Time.deltaTime;
+                wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
                 rb.velocity *= 1.001f;
             }
         }
@@ -68,11 +68,11 @@ public class PlayerController : MonoBehaviour
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                wheels[i].motorTorque = Input.GetAxis("Vertical") * power * Time.deltaTime;
+                wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
                 rb.velocity *= 0.999f;
             }
         }
-        for (int i = 2; i < 4; i++)
+        for (int i = 0; i < 2; i++)
         {
             // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
             wheels[i].steerAngle = Input.GetAxis("Horizontal") * rot;

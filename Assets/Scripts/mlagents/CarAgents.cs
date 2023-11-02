@@ -48,42 +48,121 @@ public class CarAgents : Agent
         // action1 = vertical
         // action2 = horizontal
 
-        var continuousActions = actions.ContinuousActions;
-        float action1 = continuousActions[0];
-        float action2 = continuousActions[1];
+        var discreteActions = actions.DiscreteActions;
+        int action1 = discreteActions[0];
+        int action2 = discreteActions[1];
 
-        if (action1 != 0)
+        switch(action1)
         {
-            for (int i = 0; i < playerController.wheels.Length; i++)
-            {
-                // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
-                rigidbody.velocity *= 1.001f;
-            }
-            AddReward(0.01f);
+            case 0:
+                {
+                    // 가속 없음
+                    for (int i = 0; i < playerController.wheels.Length; i++)
+                    {
+                        // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
+                        playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+                        rigidbody.velocity *= 0.999f;
+                    }
+                    AddReward(-0.01f);
+                    break;
+                }
+            case 1:
+                {
+                    // 전진
+                    for (int i = 0; i < playerController.wheels.Length; i++)
+                    {
+                        // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
+                        playerController.wheels[i].motorTorque = 1.0f * playerController.power * Time.deltaTime;
+                        rigidbody.velocity *= 1.001f;
+                    }
+                    AddReward(0.01f);
+                    break;
+                }
+            case 2:
+                {
+                    // 후진
+                    for (int i = 0; i < playerController.wheels.Length; i++)
+                    {
+                        // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
+                        playerController.wheels[i].motorTorque = -1.0f * playerController.power * Time.deltaTime;
+                        rigidbody.velocity *= 1.001f;
+                    }
+                    AddReward(0.01f);
+                    break;
+                }
         }
-        else if (action1 == 0)
+
+        //if (action1 != 0)
+        //{
+        //    for (int i = 0; i < playerController.wheels.Length; i++)
+        //    {
+        //        // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
+        //        playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+        //        rigidbody.velocity *= 1.001f;
+        //    }
+        //    AddReward(0.01f);
+        //}
+        //else if (action1 == 0)
+        //{
+        //    for (int i = 0; i < playerController.wheels.Length; i++)
+        //    {
+        //        // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
+        //        playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+        //        rigidbody.velocity *= 0.999f;
+        //    }
+        //    SetReward(-1.0f);
+        //}
+
+        switch (action2)
         {
-            for (int i = 0; i < playerController.wheels.Length; i++)
-            {
-                // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
-                rigidbody.velocity *= 0.999f;
-            }
-            SetReward(-1.0f);
+            case 0:
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
+                        playerController.wheels[i].steerAngle = action2 * playerController.rot;
+                    }
+                    break;
+                }
+
+            case 1:
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
+                        playerController.wheels[i].steerAngle = -1.0f * playerController.rot;
+                    }
+                    break;
+                }
+
+            case 2:
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
+                        playerController.wheels[i].steerAngle = 1.0f * playerController.rot;
+                    }
+                    break;
+                }
         }
-        for (int i = 2; i < 4; i++)
-        {
-            // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-            playerController.wheels[i].steerAngle = action2 * playerController.rot;
-        }
+
+        //for (int i = 2; i < 4; i++)
+        //{
+        //    // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
+        //    playerController.wheels[i].steerAngle = action2 * playerController.rot;
+        //}
+
+
+        Debug.LogWarning(action1);
+        Debug.LogError(action2);
+
         playerController.axiss = action1;
     }
 
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        playerController.MovingMachanism();
+        //playerController.MovingMachanism();
     }
 
     #endregion
