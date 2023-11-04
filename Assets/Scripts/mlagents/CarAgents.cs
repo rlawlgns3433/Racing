@@ -152,10 +152,6 @@ public class CarAgents : Agent
         //    playerController.wheels[i].steerAngle = action2 * playerController.rot;
         //}
 
-
-        Debug.LogWarning(action1);
-        Debug.LogError(action2);
-
         playerController.axiss = action1;
     }
 

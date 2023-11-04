@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameDirector : SingletonBehaviour<GameDirector>
 {
@@ -15,10 +16,10 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     Stopwatch stopwatch;
     Button select_mode_btn;
 
-    public GameObject[] Modes = new GameObject[4];
+    [SerializeField] private GameObject[] Modes = new GameObject[4];
     // GameDirector에서 구현해야 할 사항들
     /// <summary>
-    /// 1. 게임 모드 선택 시 처리
+    /// 1. 게임 모드 선택 시 처리 -> SelectGameMode()
     /// 2. 게임 시작 시 타이머 -> StartTimer(), EndTimer()
     /// 3. Start에 있는 것들 게임 시작 시로 변경 -> AnyGameStart()
     /// </summary>
@@ -29,11 +30,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     // Start is called before the first frame update
     void Start()
     {
-        select_mode_btn = GameObject.Find("select_mode").GetComponent<Button>();
-        for(int i = 0; i < GameObject.FindGameObjectsWithTag("mode").Length; i++)
-        {
-            Modes[i] = GameObject.FindGameObjectsWithTag("mode")[i];
-        }
+        
     }
 
     private void LateUpdate()
@@ -71,7 +68,13 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public void SelectGameMode()
     {
-        for(int i = 0; i < 4; i++)
+        select_mode_btn = GameObject.Find("select_mode").GetComponent<Button>();
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("mode").Length; i++)
+        {
+            Modes[i] = GameObject.FindGameObjectsWithTag("mode")[i];
+        }
+
+        for (int i = 0; i < 4; i++)
         {
             if(Modes[i] != null)
             {
@@ -85,13 +88,32 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         selectedMode = !selectedMode;
     }
 
+    public void StartSingleMode()
+    {
+        SceneManager.LoadScene("SingleMode");
+
+        Invoke("AnyGameStart", 1.0f);
+    }
+
+    public void StartMultiMode()
+    {
+        SceneManager.LoadScene("MultiMode");
+    }
+    public void StartStoryMode()
+    {
+        SceneManager.LoadScene("StoryMode");
+    }
+    public void StartAgentMode()
+    {
+        SceneManager.LoadScene("AgentMode");
+    }
 
 
     // 코루틴 부분 -> Thread
     // 타이머 로직 추가 필요
     IEnumerator DisplayDashBoard()
     {
-        double vel = 0;
+        double vel = 0; 
         while (true)
         {
             yield return new WaitForSecondsRealtime(0.05f);

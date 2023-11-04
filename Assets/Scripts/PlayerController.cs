@@ -6,8 +6,11 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
+
+    private RaycastHit hit;
     // 휠콜라이더 4개
     public WheelCollider[] wheels = new WheelCollider[4];
+    public GameObject[] CheckGrounds = new GameObject[4];
     // 차량 모델의 바퀴 부분 4개
     GameObject[] wheelMesh = new GameObject[4];
 
@@ -34,16 +37,29 @@ public class PlayerController : MonoBehaviour
 
         // 바퀴 모델을 태그를 통해서 찾아온다.(차량이 변경되더라도 자동으로 찾기위해서)
         wheelMesh = GameObject.FindGameObjectsWithTag("WheelMesh");
-
+        CheckGrounds = GameObject.FindGameObjectsWithTag("CheckGround");
         for (int i = 0; i < wheelMesh.Length; i++)
         {	// 휠콜라이더의 위치를 바퀴메쉬의 위치로 각각 이동시킨다.
             wheels[i].transform.position = wheelMesh[i].transform.position;
         }
+        
     }
 
     private void Update()
     {
         GetVelocity();
+        if(GetObjectFromCar().tag == "Road") 
+        {
+            // blabla
+        }
+        else if(GetObjectFromCar().tag == "Sand")
+        {
+            // blabla
+        }
+        else if(GetObjectFromCar().tag == "Grass")
+        {
+            // blabla
+        }
     }
 
     private void FixedUpdate()
@@ -60,7 +76,9 @@ public class PlayerController : MonoBehaviour
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
                 wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
-                rb.velocity *= 1.001f;
+                if(velocity < 100 ) rb.velocity *= 1.002f;
+                else if(velocity < 200) rb.velocity *= 1.0001f;
+                else if(velocity >= 200) rb.velocity *= 1.00001f;
             }
         }
         else if (Input.GetAxis("Vertical") == 0)
@@ -100,5 +118,21 @@ public class PlayerController : MonoBehaviour
         var distance = Math.Sqrt(Math.Pow(dis.x, 2) + Math.Pow(dis.y, 2) + Math.Pow(dis.z, 2));
         velocity = distance / Time.deltaTime;
         oldPosition = currentPosition;
+    }
+
+    GameObject GetObjectFromCar()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if (Physics.Raycast(CheckGrounds[i].transform.position, -CheckGrounds[i].transform.up, out hit))
+            {
+                Debug.DrawRay(CheckGrounds[i].transform.position, -CheckGrounds[i].transform.up * hit.distance, Color.red);
+            }
+            else
+            {
+                Debug.DrawRay(CheckGrounds[i].transform.position, -CheckGrounds[i].transform.up * 1000f, Color.red);
+            }
+        }
+        return hit.collider.gameObject;
     }
 }
