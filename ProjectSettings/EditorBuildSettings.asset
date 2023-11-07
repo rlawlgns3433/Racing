@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyScene.unity
     guid: 073a26c243033fa449ed311a2792a8ef
   - enabled: 1
+    path: Assets/Scenes/Garage.unity
+    guid: ddade7bdce51cc64bb0e9c8c8632182f
+  - enabled: 1
     path: Assets/Scenes/Modes/SingleMode.unity
     guid: e402f28461b113b459cbd12194e8f875
+  - enabled: 1
+    path: Assets/Scenes/Modes/TestMode.unity
+    guid: 939b6a04f0bfa8c4b960965d41a9d1d6
   m_configObjects: {}

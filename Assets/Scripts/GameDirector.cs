@@ -90,7 +90,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public void StartSingleMode()
     {
-        SceneManager.LoadScene("SingleMode");
+        SceneManager.LoadScene("TestMode");
 
         Invoke("AnyGameStart", 1.0f);
     }
@@ -107,7 +107,10 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     {
         SceneManager.LoadScene("AgentMode");
     }
-
+    public void EnterGarage()
+    {
+        SceneManager.LoadScene("Garage");
+    }
 
     // 코루틴 부분 -> Thread
     // 타이머 로직 추가 필요
@@ -118,10 +121,9 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         {
             yield return new WaitForSecondsRealtime(0.05f);
 
-            if (m_myCar.GetComponent<PlayerController>().velocity == vel) continue;
+            if (m_myCar.GetComponent<PlayerController>().currentVelocity == vel) continue;
 
-            string formattedVelocity = m_myCar.GetComponent<PlayerController>().velocity.ToString("F2");
-            m_Car_DashBoard.text = formattedVelocity + " / " + this.m_max_velocity + "\n" + m_myCar.GetComponent<PlayerController>().axiss;
+            m_Car_DashBoard.text = m_myCar.GetComponent<PlayerController>().currentVelocity + " / " + this.m_max_velocity + "\n" + m_myCar.GetComponent<PlayerController>().axiss;
         }
     }
 }

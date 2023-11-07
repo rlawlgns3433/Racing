@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 oldPosition;
     private Vector3 currentPosition;
     public double velocity;
-
+    public float currentVelocity;
     void Start()
     {
         rot = 45f;
@@ -67,7 +67,6 @@ public class PlayerController : MonoBehaviour
         WheelPosAndAni();
         MovingMachanism();
     }
-    
     public void MovingMachanism()
     {
         if (Input.GetAxis("Vertical") != 0)
@@ -76,10 +75,28 @@ public class PlayerController : MonoBehaviour
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
                 wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
-                if(velocity < 100 ) rb.velocity *= 1.002f;
-                else if(velocity < 200) rb.velocity *= 1.0001f;
-                else if(velocity >= 200) rb.velocity *= 1.00001f;
             }
+
+            if (currentVelocity < 100)
+            {
+                rb.velocity *= 1.0025f; // 100 미만일 때 가속을 높임
+            }
+            else if (currentVelocity < 200)
+            {
+                rb.velocity *= 1.0015f; // 100 이상 200 미만일 때 가속을 더 높임
+            }
+            else if (currentVelocity >= 200)
+            {
+                rb.velocity *= 1.00075f; // 200 이상일 때 가속을 높임
+            }
+
+            // 여기서 속도를 제한합니다.
+            if (currentVelocity >= 400f)
+            {
+                rb.velocity = rb.velocity.normalized * 400f;
+                currentVelocity = 400f;
+            }
+
         }
         else if (Input.GetAxis("Vertical") == 0)
         {
@@ -87,16 +104,55 @@ public class PlayerController : MonoBehaviour
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
                 wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
-                rb.velocity *= 0.999f;
             }
+
+            // 여기서도 속도를 제한합니다.
+            if (rb.velocity.magnitude > 400f)
+            {
+                rb.velocity = rb.velocity.normalized * 400f;
+            }
+
+            rb.velocity *= 0.995f;
         }
+
         for (int i = 0; i < 2; i++)
         {
             // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
             wheels[i].steerAngle = Input.GetAxis("Horizontal") * rot;
         }
+        currentVelocity = rb.velocity.magnitude * 4;
         axiss = Input.GetAxis("Vertical");
     }
+
+    //public void MovingMachanism()
+    //{
+    //    if (Input.GetAxis("Vertical") != 0)
+    //    {
+    //        for (int i = 0; i < wheels.Length; i++)
+    //        {
+    //            // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
+    //            wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
+    //            if(velocity < 100 ) rb.velocity *= 1.002f;
+    //            else if(velocity < 200) rb.velocity *= 1.0001f;
+    //            else if(velocity >= 200) rb.velocity *= 1.00001f;
+    //        }
+    //    }
+    //    else if (Input.GetAxis("Vertical") == 0)
+    //    {
+    //        for (int i = 0; i < wheels.Length; i++)
+    //        {
+    //            // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
+    //            wheels[i].motorTorque = Input.GetAxis("Vertical") * power;
+    //            rb.velocity *= 0.999f;
+    //        }
+    //    }
+    //    for (int i = 0; i < 2; i++)
+    //    {
+    //        // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
+    //        wheels[i].steerAngle = Input.GetAxis("Horizontal") * rot;
+    //    }
+    //    axiss = Input.GetAxis("Vertical");
+    //}
 
     void WheelPosAndAni()
     {
