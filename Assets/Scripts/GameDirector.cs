@@ -8,15 +8,19 @@ using UnityEngine.SceneManagement;
 
 public class GameDirector : SingletonBehaviour<GameDirector>
 {
+    [SerializeField] private GameObject[] Modes = new GameObject[4];
+    [SerializeField] private GameObject[] settings = new GameObject[6];
     private Text m_Car_DashBoard;
     private GameObject m_myCar;
     private Rigidbody m_myCar_rigid;
+
     private float  m_max_velocity;
     private bool selectedMode = false;
-    Stopwatch stopwatch;
-    Button select_mode_btn;
+    private bool setting = false;
 
-    [SerializeField] private GameObject[] Modes = new GameObject[4];
+    private Stopwatch stopwatch;
+    private Button select_mode_btn;
+
     // GameDirector에서 구현해야 할 사항들
     /// <summary>
     /// 1. 게임 모드 선택 시 처리 -> SelectGameMode()
@@ -90,7 +94,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public void StartSingleMode()
     {
-        SceneManager.LoadScene("TestMode");
+        SceneManager.LoadScene("SingleMode");
 
         Invoke("AnyGameStart", 1.0f);
     }
@@ -110,6 +114,26 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     public void EnterGarage()
     {
         SceneManager.LoadScene("Garage");
+    }
+    public void Settings()
+    {
+
+        int len = GameObject.FindGameObjectsWithTag("Settings").Length;
+        for (int i = 0; i < len; i++)
+        {
+            settings[i] = GameObject.FindGameObjectsWithTag("Settings")[i];
+        }
+
+        for (int j = 0; j < len; j++)
+        {
+            if (settings[j] != null)
+            {
+                settings[j].SetActive(!setting);
+            }
+        }
+        UnityEngine.Debug.Log(setting);
+
+        setting = !setting;
     }
 
     // 코루틴 부분 -> Thread

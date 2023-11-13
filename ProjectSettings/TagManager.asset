@@ -8,6 +8,7 @@ TagManager:
   - CheckPoint
   - mode
   - CheckGround
+  - Settings
   layers:
   - Default
   - TransparentFX
