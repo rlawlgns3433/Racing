@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 3711092669130670750}
   m_Layer: 0
   m_Name: CheckRoad1
-  m_TagString: Untagged
+  m_TagString: CheckGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -368,15 +368,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da8aaa3655bce5540a15c3fb0fc80444, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSpeedKmPerHour: 400
+  timeTo100KmPerHour: 7
   wheels:
   - {fileID: 3811774183838914842}
   - {fileID: 3811774183721264418}
   - {fileID: 3811774183239667054}
   - {fileID: 3811774183132220143}
+  CheckGrounds:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   power: 200
   rot: -45
   axiss: 0
   velocity: 0
+  currentVelocity: 0
+  torqueCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxSpeed: 400
+  m_countdown: 3
 --- !u!1 &3811774183319452728
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,7 +1015,7 @@ GameObject:
   - component: {fileID: 2713322062033005296}
   m_Layer: 0
   m_Name: CheckRoad3
-  m_TagString: Untagged
+  m_TagString: CheckGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1030,7 +1046,7 @@ GameObject:
   - component: {fileID: 6225947543549595099}
   m_Layer: 0
   m_Name: CheckRoad2
-  m_TagString: Untagged
+  m_TagString: CheckGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1061,7 +1077,7 @@ GameObject:
   - component: {fileID: 2283657495010386870}
   m_Layer: 0
   m_Name: CheckRoad4
-  m_TagString: Untagged
+  m_TagString: CheckGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
