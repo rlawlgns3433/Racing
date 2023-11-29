@@ -14,14 +14,17 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     public GameObject loadingScreen;
     private Text m_Car_DashBoard;
     private Text m_CountDown;
+    private Text m_CurrentTime;
     private GameObject m_myCar;
     private Rigidbody m_myCar_rigid;
 
+    public float current_time;
     private float m_max_velocity;
     [SerializeField] private float m_countdown = 3f;
     private bool selectedMode = false;
     private bool setting = true;
     private bool loading = false;
+    private bool isStart = false;
 
     private Stopwatch stopwatch;
     private Button select_mode_btn;
@@ -46,13 +49,17 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     private void Update()
     {
-        
+        if(isStart && m_CountDown.text == "0")
+        {
+            current_time += Time.deltaTime;
+        }
     }
 
     void AnyGameStart()
     {
         m_Car_DashBoard = GameObject.Find("CurVelocity").GetComponent<Text>();
         m_CountDown = GameObject.Find("CountDown").GetComponent<Text>();
+        m_CurrentTime = GameObject.Find("CurrentTime").GetComponent<Text>();
         loadingScreen = GameObject.Find("LoadingScreen");   
         m_myCar = GameObject.Find("MyCar");
         m_myCar_rigid = m_myCar.GetComponent<Rigidbody>();
@@ -62,18 +69,20 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         StartCoroutine(DisplayLoadingScreen(loadingScreen));
         StartCoroutine(DisplayCountDown(m_countdown));
 
+        isStart = true;
     }
 
     void StartTimer()
     {
-        stopwatch = new Stopwatch();
-        stopwatch.Start();
+        
     }
 
     double EndTimer()
     {
         TimeSpan elapsed = stopwatch.Elapsed;
         double totalSeconds = elapsed.TotalSeconds;
+
+        double totals = stopwatch.Elapsed.TotalSeconds;
 
         stopwatch.Reset();
         return totalSeconds;
@@ -141,8 +150,6 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     }
 
-    // 코루틴 부분 -> Thread
-    // 타이머 로직 추가 필요
     IEnumerator DisplayDashBoard()
     {
         double vel = 0;
@@ -152,7 +159,11 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
             if (m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity == vel) continue;
 
-            m_Car_DashBoard.text = m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4 + " / " + this.m_max_velocity * 4 + "\n" + m_myCar.GetComponent<PlayerController>().mCarData.axiss;
+            m_Car_DashBoard.text = ((int)(m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4)).ToString();
+
+            int hour, minute, second;
+            hour = ((int)(current_time / 3600)); current_time %= 3600; minute = ((int)(current_time / 60)); second = (int)(current_time % 60);
+            m_CurrentTime.text = /*hour.ToString() + ":" + minute.ToString() + ":" + second.ToString();*/current_time.ToString();
         }
     }
 
@@ -170,6 +181,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
             if (m_CountDown.text == "0")
             {
                 m_CountDown.text = "";
+                //StartTimer();
                 break;
             }
         }

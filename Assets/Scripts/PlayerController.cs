@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 currentPosition;
     private Rigidbody rb;
     private RaycastHit hit;
-
+    public WheelCollider FL_Wheel, FR_Wheel;
     private const float kmhToMs = 0.277778f; // km/h를 m/s로 변환하기 위한 상수
 
 
@@ -58,7 +58,9 @@ public class PlayerController : MonoBehaviour
         {	// 휠콜라이더의 위치를 바퀴메쉬의 위치로 각각 이동시킨다.
             wheels[i].transform.position = wheelMesh[i].transform.position;
         }
-        
+
+        FL_Wheel = GameObject.Find("Wheel_FL").GetComponent<WheelCollider>();
+        FR_Wheel = GameObject.Find("Wheel_FR").GetComponent<WheelCollider>();
     }
 
     private void Update()
@@ -161,11 +163,10 @@ public class PlayerController : MonoBehaviour
             rb.velocity *= 0.99f;
         }
 
-        for (int i = 0; i < 2; i++)
-        {
-            // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-            wheels[i].steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
-        }
+
+        FL_Wheel.steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
+        FR_Wheel.steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
+
         mCarData.currentVelocity = rb.velocity.magnitude;
         mCarData.axiss = Input.GetAxis("Vertical");
     }
