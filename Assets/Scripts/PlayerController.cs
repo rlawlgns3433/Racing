@@ -6,44 +6,46 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float maxSpeedKmPerHour = 100f; // 최대 속도 (km/h)
-    private const float kmhToMs = 0.277778f; // km/h를 m/s로 변환하기 위한 상수
 
-    // 속도를 km/h 단위로 표시
-    public float CurrentSpeedKmPerHour => rb.velocity.magnitude * kmhToMs * 3.6f;
-
-    // 0에서 100km/h까지의 가속 시간 계산 (일반적인 예시)
-    public float timeTo100KmPerHour = 7f; // 예시로 7초로 설정
-
-
-
-
-    private RaycastHit hit;
-    // 휠콜라이더 4개
-    public WheelCollider[] wheels = new WheelCollider[4];
-    public GameObject[] CheckGrounds = new GameObject[4];
-    // 차량 모델의 바퀴 부분 4개
-    GameObject[] wheelMesh = new GameObject[4];
-
-    public float power = 200.0f; // 바퀴를 회전시킬 힘
-    public float rot = 0; // 바퀴의 회전 각도
-    Rigidbody rb;
-    
-    /// <summary>
-    /// test axis
-    /// </summary>
-    public float axiss;
-
+    // private 
+    private GameObject[] wheelMesh = new GameObject[4];
     private Vector3 oldPosition;
     private Vector3 currentPosition;
-    public double velocity;
-    public float currentVelocity;
-    public AnimationCurve torqueCurve; // 속도에 따른 토크 변화를 위한 곡선
-    public float maxSpeed = 100f;
+    private Rigidbody rb;
+    private RaycastHit hit;
+
+    private const float kmhToMs = 0.277778f; // km/h를 m/s로 변환하기 위한 상수
+
+
+
+    // public
+    
+    public WheelCollider[] wheels = new WheelCollider[4]; // 휠콜라이더 4개
+    public GameObject[] CheckGrounds = new GameObject[4];
+    public CarData mCarData;
+    public float maxSpeedKmPerHour = 100f; // 최대 속도 (km/h)
+    public float timeTo100KmPerHour = 7f; // 예시로 7초로 설정  // 0에서 100km/h까지의 가속 시간 계산 (일반적인 예시)
+    //public float CurrentSpeedKmPerHour => rb.velocity.magnitude * kmhToMs * 3.6f;
+    //// 속도를 km/h 단위로 표시
+
+
+    /// <summary>
+    /// CarData 대체 부분
+    ///// </summary>
+    //public float power = 300.0f; // 바퀴를 회전시킬 힘
+    //public float rot = 0; // 바퀴의 회전 각도
+    //public float axiss;
+    //public double velocity;
+    //public float currentVelocity;
+    ////public AnimationCurve torqueCurve; // 속도에 따른 토크 변화를 위한 곡선
+    //public float maxSpeed = 100f;
     public float m_countdown = 3f;
+
+
+
+
     void Start()
     {
-        rot = 45f;
         rb = GetComponent<Rigidbody>();
         // 무게 중심을 y축 아래방향으로 낮춘다.
         rb.centerOfMass = new Vector3(0, -1, 0);
@@ -98,14 +100,14 @@ public class PlayerController : MonoBehaviour
     }
 
     // 속도에 따른 토크를 계산하는 함수
-    float CalculateTorqueByVelocity(float currentVelocity)
-    {
-        float normalizedVelocity = currentVelocity / maxSpeed; // 현재 속도를 정규화합니다. (0에서 1 사이의 값으로)
+    //float CalculateTorqueByVelocity(float currentVelocity)
+    //{
+    //    float normalizedVelocity = currentVelocity / maxSpeed; // 현재 속도를 정규화합니다. (0에서 1 사이의 값으로)
 
-        // 속도에 따른 토크 변화를 정의한 곡선을 사용하여 토크 값을 가져옵니다.
-        float torque = torqueCurve.Evaluate(normalizedVelocity);
-        return torque;
-    }
+    //    // 속도에 따른 토크 변화를 정의한 곡선을 사용하여 토크 값을 가져옵니다.
+    //    float torque = torqueCurve.Evaluate(normalizedVelocity);
+    //    return torque;
+    //}
 
     public void MovingMachanism()
     {
@@ -116,14 +118,14 @@ public class PlayerController : MonoBehaviour
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                wheels[i].motorTorque = acceleration * power;
+                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
             }
 
             // 여기서 속도를 제한합니다.
-            if (currentVelocity >= 100f)
+            if (mCarData.currentVelocity >= 100f)
             {
                 rb.velocity = rb.velocity.normalized * 100f;
-                currentVelocity = 100f;
+                mCarData.currentVelocity = 100f;
             }
 
         }
@@ -132,14 +134,14 @@ public class PlayerController : MonoBehaviour
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                wheels[i].motorTorque = acceleration * power;
+                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
             }
 
             // 여기서 속도를 제한합니다.
-            if (currentVelocity >= 100f)
+            if (mCarData.currentVelocity >= 100f)
             {
                 rb.velocity = rb.velocity.normalized * 100f;
-                currentVelocity = 100f;
+                mCarData.currentVelocity = 100f;
             }
         }
         else if (Input.GetAxis("Vertical") == 0)
@@ -147,7 +149,7 @@ public class PlayerController : MonoBehaviour
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                wheels[i].motorTorque = acceleration * power;
+                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
             }
 
             // 여기서도 속도를 제한합니다.
@@ -162,10 +164,10 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-            wheels[i].steerAngle = Input.GetAxis("Horizontal") * rot;
+            wheels[i].steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
         }
-        currentVelocity = rb.velocity.magnitude;
-        axiss = Input.GetAxis("Vertical");
+        mCarData.currentVelocity = rb.velocity.magnitude;
+        mCarData.axiss = Input.GetAxis("Vertical");
     }
 
 
@@ -187,7 +189,7 @@ public class PlayerController : MonoBehaviour
         currentPosition = transform.position;
         var dis = (currentPosition - oldPosition);
         var distance = Math.Sqrt(Math.Pow(dis.x, 2) + Math.Pow(dis.y, 2) + Math.Pow(dis.z, 2));
-        velocity = distance / Time.deltaTime;
+        mCarData.velocity = distance / Time.deltaTime;
         oldPosition = currentPosition;
     }
 

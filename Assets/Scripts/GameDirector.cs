@@ -11,6 +11,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 {
     [SerializeField] private GameObject[] Modes = new GameObject[4];
     [SerializeField] private GameObject settings;
+    public GameObject loadingScreen;
     private Text m_Car_DashBoard;
     private Text m_CountDown;
     private GameObject m_myCar;
@@ -20,7 +21,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     [SerializeField] private float m_countdown = 3f;
     private bool selectedMode = false;
     private bool setting = true;
-
+    private bool loading = false;
 
     private Stopwatch stopwatch;
     private Button select_mode_btn;
@@ -37,20 +38,28 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         DontDestroyOnLoad(gameObject);
+        loadingScreen.SetActive(false);
+    }
+
+    private void Update()
+    {
+        
     }
 
     void AnyGameStart()
     {
         m_Car_DashBoard = GameObject.Find("CurVelocity").GetComponent<Text>();
         m_CountDown = GameObject.Find("CountDown").GetComponent<Text>();
+        loadingScreen = GameObject.Find("LoadingScreen");   
         m_myCar = GameObject.Find("MyCar");
         m_myCar_rigid = m_myCar.GetComponent<Rigidbody>();
-        m_max_velocity = 400.0f;
+        m_max_velocity = 100.0f;
 
-        StartCoroutine("DisplayDashBoard");
+        StartCoroutine(DisplayDashBoard());
+        StartCoroutine(DisplayLoadingScreen(loadingScreen));
         StartCoroutine(DisplayCountDown(m_countdown));
 
     }
@@ -94,14 +103,13 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public void StartSingleMode()
     {
-        SceneManager.LoadScene("SingleMode");
-
-        Invoke("AnyGameStart", 1.0f);
+        StartCoroutine(loadScene("SingleMode"));
     }
 
     public void StartMultiMode()
     {
         SceneManager.LoadScene("TestMode");
+        loadingScreen.SetActive(true);
         Invoke("AnyGameStart", 1.0f);
     }
     public void StartStoryMode()
@@ -111,6 +119,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     public void StartAgentMode()
     {
         SceneManager.LoadScene("TestMode2");
+        loadingScreen.SetActive(true);
         Invoke("AnyGameStart", 1.0f);
     }
     public void EnterGarage()
@@ -124,11 +133,11 @@ public class GameDirector : SingletonBehaviour<GameDirector>
             settings.SetActive(!setting);
             settings.transform.GetChild(0).gameObject.SetActive(!setting);
             setting = !setting;
-
         }
-
-
         UnityEngine.Debug.Log(setting);
+    }
+    public void QuitGamePopUp()
+    {
 
     }
 
@@ -141,9 +150,9 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         {
             yield return new WaitForSecondsRealtime(0.05f);
 
-            if (m_myCar.GetComponent<PlayerController>().currentVelocity == vel) continue;
+            if (m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity == vel) continue;
 
-            m_Car_DashBoard.text = m_myCar.GetComponent<PlayerController>().currentVelocity * 4 + " / " + this.m_max_velocity + "\n" + m_myCar.GetComponent<PlayerController>().axiss;
+            m_Car_DashBoard.text = m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4 + " / " + this.m_max_velocity * 4 + "\n" + m_myCar.GetComponent<PlayerController>().mCarData.axiss;
         }
     }
 
@@ -164,5 +173,32 @@ public class GameDirector : SingletonBehaviour<GameDirector>
                 break;
             }
         }
+    }
+
+    IEnumerator DisplayLoadingScreen(GameObject loadingScreen)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(2);
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (loadingScreen != null)
+                {
+                    loadingScreen.SetActive(!loading);
+                    yield return new WaitForSeconds(2);
+                    loadingScreen.SetActive(loading);
+                }
+            }
+        }
+    }
+
+    IEnumerator loadScene(string SceneName)
+    {
+        loadingScreen.SetActive(true);
+
+        yield return new WaitForSeconds(1.0f);
+        loadingScreen.SetActive(false);
+        SceneManager.LoadScene(SceneName);
+        Invoke("AnyGameStart", 1.0f);
     }
 }

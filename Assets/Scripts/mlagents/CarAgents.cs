@@ -60,7 +60,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < playerController.wheels.Length; i++)
                     {
                         // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                        playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+                        playerController.wheels[i].motorTorque = action1 * playerController.mCarData.power * Time.deltaTime;
                         rigidbody.velocity *= 0.999f;
                     }
                     AddReward(-0.01f);
@@ -72,7 +72,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < playerController.wheels.Length; i++)
                     {
                         // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                        playerController.wheels[i].motorTorque = 1.0f * playerController.power * Time.deltaTime;
+                        playerController.wheels[i].motorTorque = 1.0f * playerController.mCarData.power * Time.deltaTime;
                         rigidbody.velocity *= 1.001f;
                     }
                     AddReward(0.01f);
@@ -84,7 +84,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < playerController.wheels.Length; i++)
                     {
                         // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                        playerController.wheels[i].motorTorque = -1.0f * playerController.power * Time.deltaTime;
+                        playerController.wheels[i].motorTorque = -1.0f * playerController.mCarData.power * Time.deltaTime;
                         rigidbody.velocity *= 1.001f;
                     }
                     AddReward(0.01f);
@@ -120,7 +120,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < 2; i++)
                     {
                         // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-                        playerController.wheels[i].steerAngle = action2 * playerController.rot;
+                        playerController.wheels[i].steerAngle = action2 * playerController.mCarData.rot;
                     }
                     break;
                 }
@@ -130,7 +130,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < 2; i++)
                     {
                         // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-                        playerController.wheels[i].steerAngle = -1.0f * playerController.rot;
+                        playerController.wheels[i].steerAngle = -1.0f * playerController.mCarData.rot;
                     }
                     break;
                 }
@@ -140,7 +140,7 @@ public class CarAgents : Agent
                     for (int i = 0; i < 2; i++)
                     {
                         // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-                        playerController.wheels[i].steerAngle = 1.0f * playerController.rot;
+                        playerController.wheels[i].steerAngle = 1.0f * playerController.mCarData.rot;
                     }
                     break;
                 }
@@ -152,7 +152,7 @@ public class CarAgents : Agent
         //    playerController.wheels[i].steerAngle = action2 * playerController.rot;
         //}
 
-        playerController.axiss = action1;
+        playerController.mCarData.axiss = action1;
     }
 
 
@@ -182,7 +182,7 @@ public class CarAgents : Agent
             for (int i = 0; i < playerController.wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+                playerController.wheels[i].motorTorque = action1 * playerController.mCarData.power * Time.deltaTime;
                 rigidbody.velocity *= 1.001f;
             }
             AddReward(0.01f);
@@ -192,7 +192,7 @@ public class CarAgents : Agent
             for (int i = 0; i < playerController.wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                playerController.wheels[i].motorTorque = action1 * playerController.power * Time.deltaTime;
+                playerController.wheels[i].motorTorque = action1 * playerController.mCarData.power * Time.deltaTime;
                 rigidbody.velocity *= 0.999f;
             }
             SetReward(-1.0f);
@@ -200,9 +200,9 @@ public class CarAgents : Agent
         for (int i = 2; i < 4; i++)
         {
             // 앞바퀴만 각도전환이 되어야하므로 for문을 앞바퀴만 해당되도록 설정한다.
-            playerController.wheels[i].steerAngle = action2 * playerController.rot;
+            playerController.wheels[i].steerAngle = action2 * playerController.mCarData.rot;
         }
-        playerController.axiss = action1;
+        playerController.mCarData.axiss = action1;
     }
 }
 

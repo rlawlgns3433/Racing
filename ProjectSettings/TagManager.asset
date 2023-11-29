@@ -9,6 +9,7 @@ TagManager:
   - mode
   - CheckGround
   - Settings
+  - LoadingScreen
   layers:
   - Default
   - TransparentFX
