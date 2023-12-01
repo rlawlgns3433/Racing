@@ -20,7 +20,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public float current_time;
     private float m_max_velocity;
-    [SerializeField] private float m_countdown = 3f;
+    [SerializeField] private float m_countdown = 20.1f;
     private bool selectedMode = false;
     private bool setting = true;
     private bool loading = false;
@@ -173,17 +173,21 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         {
             yield return new WaitForSeconds(0.00001f);
             countdown -= Time.deltaTime;
-            string cur_time = Mathf.Round(countdown).ToString();
-            m_CountDown.text = cur_time;
-
-            UnityEngine.Debug.Log(cur_time);
-
-            if (m_CountDown.text == "0")
+            if(countdown < 3)
             {
-                m_CountDown.text = "";
-                //StartTimer();
-                break;
+                string cur_time = Mathf.Round(countdown).ToString();
+                m_CountDown.text = cur_time;
+
+                UnityEngine.Debug.Log(cur_time);
+
+                if (m_CountDown.text == "0")
+                {
+                    m_CountDown.text = "";
+                    //StartTimer();
+                    break;
+                }
             }
+            
         }
     }
 

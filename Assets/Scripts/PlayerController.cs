@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     //public float currentVelocity;
     ////public AnimationCurve torqueCurve; // 속도에 따른 토크 변화를 위한 곡선
     //public float maxSpeed = 100f;
-    public float m_countdown = 3f;
+    public float m_countdown = 7.1f;
 
 
 
