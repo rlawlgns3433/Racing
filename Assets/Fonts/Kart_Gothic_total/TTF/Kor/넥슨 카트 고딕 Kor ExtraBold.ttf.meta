@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 66d863074d811c0478dc67df7734f6e4
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Kartrider Kor
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 46ef00be726e5914baaddfe31c92e787, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

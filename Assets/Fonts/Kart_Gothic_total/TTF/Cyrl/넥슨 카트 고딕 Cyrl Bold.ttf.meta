@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 0b5e4335d796eba49870759c62be776e
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Kartrider Cyrl
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1962b93d839d49e44acaae0a4f7bae96, type: 3}
+  - {fileID: 12800000, guid: 684b8f96bc7fac34984d92337a7b43ed, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
