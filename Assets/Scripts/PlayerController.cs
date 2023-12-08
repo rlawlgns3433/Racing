@@ -218,7 +218,7 @@ public class PlayerController : MonoBehaviour
         oldPosition = currentPosition;
     }
 
-    GameObject GetObjectFromCar()
+    public GameObject GetObjectFromCar()
     {
         for(int i = 0; i < 4; i++)
         {
