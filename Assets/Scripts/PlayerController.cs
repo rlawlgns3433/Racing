@@ -19,12 +19,21 @@ public class PlayerController : MonoBehaviour
 
 
     // public
-    
+
+    public AudioSource carAudio;
+    public AudioClip engineClip;
+    public AudioClip drivingClip;
+    public AudioClip slipClip;
+    public AudioClip stoppingClip;
+    public AudioClip collisionClip;
+
     public WheelCollider[] wheels = new WheelCollider[4]; // 휠콜라이더 4개
     public GameObject[] CheckGrounds = new GameObject[4];
     public CarData mCarData;
     public float maxSpeedKmPerHour = 100f; // 최대 속도 (km/h)
     public float timeTo100KmPerHour = 7f; // 예시로 7초로 설정  // 0에서 100km/h까지의 가속 시간 계산 (일반적인 예시)
+
+
     //public float CurrentSpeedKmPerHour => rb.velocity.magnitude * kmhToMs * 3.6f;
     //// 속도를 km/h 단위로 표시
 
@@ -42,10 +51,17 @@ public class PlayerController : MonoBehaviour
     public float m_countdown = 7.1f;
 
 
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Collision_ENV")
+        {
+            carAudio.PlayOneShot(collisionClip);
+        }
+    }
 
     void Start()
     {
+        carAudio.PlayOneShot(engineClip);
         rb = GetComponent<Rigidbody>();
         // 무게 중심을 y축 아래방향으로 낮춘다.
         rb.centerOfMass = new Vector3(0, -1, 0);
@@ -72,6 +88,12 @@ public class PlayerController : MonoBehaviour
             Input.ResetInputAxes();
         }
 
+        if(mCarData.currentVelocity < 2)
+        {
+            carAudio.clip = drivingClip;
+            carAudio.Play();
+        }
+
         GetVelocity();
         if(GetObjectFromCar().tag == "Road") 
         {
@@ -91,6 +113,8 @@ public class PlayerController : MonoBehaviour
     {
         WheelPosAndAni();
         MovingMachanism();
+
+        
     }
 
 
@@ -207,6 +231,7 @@ public class PlayerController : MonoBehaviour
                 Debug.DrawRay(CheckGrounds[i].transform.position, -CheckGrounds[i].transform.up * 1000f, Color.red);
             }
         }
-        return hit.collider.gameObject;
+        if (hit.collider.gameObject != null) return hit.collider.gameObject;
+        else return null;
     }
 }

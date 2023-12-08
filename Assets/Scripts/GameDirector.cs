@@ -28,13 +28,14 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     private Stopwatch stopwatch;
     private Button select_mode_btn;
-
+    public RectTransform Needle;
 
     // GameDirector에서 구현해야 할 사항들
     /// <summary>
     /// 1. 게임 모드 선택 시 처리 -> SelectGameMode()
     /// 2. 게임 시작 시 타이머 -> StartTimer(), EndTimer()
     /// 3. Start에 있는 것들 게임 시작 시로 변경 -> AnyGameStart()
+    /// 4. needle의 범위는 (180~-90 각도)
     /// </summary>
 
 
@@ -49,10 +50,15 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     private void Update()
     {
-        if(isStart && m_CountDown.text == "0")
+        if(isStart)
         {
-            current_time += Time.deltaTime;
+            Needle.rotation = Quaternion.Euler(0, 0, 180 - (m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4) * (float)(0.675));
+            if (m_CountDown.text == "0")
+            {
+                current_time += Time.deltaTime;
+            }
         }
+
     }
 
     void AnyGameStart()
@@ -60,7 +66,9 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         m_Car_DashBoard = GameObject.Find("CurVelocity").GetComponent<Text>();
         m_CountDown = GameObject.Find("CountDown").GetComponent<Text>();
         m_CurrentTime = GameObject.Find("CurrentTime").GetComponent<Text>();
-        loadingScreen = GameObject.Find("LoadingScreen");   
+        loadingScreen = GameObject.Find("LoadingScreen");
+        Needle = GameObject.Find("Needle").GetComponent<RectTransform>();
+
         m_myCar = GameObject.Find("MyCar");
         m_myCar_rigid = m_myCar.GetComponent<Rigidbody>();
         m_max_velocity = 100.0f;
