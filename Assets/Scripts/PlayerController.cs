@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
     private GameObject[] wheelMesh = new GameObject[4];
     private Vector3 oldPosition;
     private Vector3 currentPosition;
-    private Rigidbody rb;
-    private RaycastHit hit;
+    public Rigidbody rb;
+    private RaycastHit hit, hit_forward;
     public WheelCollider FL_Wheel, FR_Wheel;
     private const float kmhToMs = 0.277778f; // km/h를 m/s로 변환하기 위한 상수
 
@@ -107,12 +107,15 @@ public class PlayerController : MonoBehaviour
         {
             // blabla
         }
+
     }
 
     private void FixedUpdate()
     {
+        float v = Input.GetAxis("Vertical");
+        float h = Input.GetAxis("Horizontal");
         WheelPosAndAni();
-        MovingMachanism();
+        MovingMachanism(v, h);
 
         
     }
@@ -135,16 +138,16 @@ public class PlayerController : MonoBehaviour
     //    return torque;
     //}
 
-    public void MovingMachanism()
+    public void MovingMachanism(float v, float h)
     {
-        float acceleration = Input.GetAxis("Vertical") * AccelerationRate();
+        float acceleration = v * AccelerationRate();
 
-        if (Input.GetAxis("Vertical") > 0)
+        if (v > 0)
         {
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
+                wheels[i].motorTorque = v * mCarData.power;
             }
 
             // 여기서 속도를 제한합니다.
@@ -155,12 +158,12 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        else if(Input.GetAxis("Vertical") < 0)
+        else if(v < 0)
         {
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체를 Vertical 입력에 따라서 power만큼의 힘으로 움직이게한다.
-                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
+                wheels[i].motorTorque = v * mCarData.power;
             }
 
             // 여기서 속도를 제한합니다.
@@ -170,12 +173,12 @@ public class PlayerController : MonoBehaviour
                 mCarData.currentVelocity = 100f;
             }
         }
-        else if (Input.GetAxis("Vertical") == 0)
+        else if (v == 0)
         {
             for (int i = 0; i < wheels.Length; i++)
             {
                 // for문을 통해서 휠콜라이더 전체의 속도를 점점 낮춘다.
-                wheels[i].motorTorque = Input.GetAxis("Vertical") * mCarData.power;
+                wheels[i].motorTorque = v * mCarData.power;
             }
 
             // 여기서도 속도를 제한합니다.
@@ -188,15 +191,15 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        FL_Wheel.steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
-        FR_Wheel.steerAngle = Input.GetAxis("Horizontal") * mCarData.rot;
+        FL_Wheel.steerAngle = h * mCarData.rot;
+        FR_Wheel.steerAngle = h * mCarData.rot;
 
         mCarData.currentVelocity = rb.velocity.magnitude;
-        mCarData.axiss = Input.GetAxis("Vertical");
+        mCarData.axiss = v;
     }
 
 
-    void WheelPosAndAni()
+    public void WheelPosAndAni()
     {
         Vector3 wheelPosition = Vector3.zero;
         Quaternion wheelRotation = Quaternion.identity;

@@ -214,19 +214,36 @@ using Unity.MLAgents.Actuators;
 
 public class CarAgents : Agent
 {
+    public bool isClosed = false;
+    public float oldDistance;
+    public float curDistance;
+    public int cnt = 1;
+    public RaycastHit hit_forward;
+    public BoxCollider[] checkpoints = new BoxCollider[19];
     public PlayerController playerController;
     Rigidbody carRb;
     public float speed = 10f;
 
+    private void Awake()
+    {
+        
+    }
     void Start()
     {
         carRb = GetComponent<Rigidbody>();
     }
 
+    private void Update()
+    {
+        playerController.WheelPosAndAni();
+    }
+
     public override void OnEpisodeBegin()
     {
-        // Reset car's position and other necessary variables
-        // For example, reset the car's position to the starting point of the track
+        Init();
+        cnt = 1;
+        transform.localPosition = new Vector3(0, 1.5f, -30);
+        transform.localRotation = Quaternion.Euler(new Vector3(0, -90, 0));
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -236,6 +253,11 @@ public class CarAgents : Agent
         sensor.AddObservation(carRb.velocity);
         sensor.AddObservation(transform.position);
         sensor.AddObservation(transform.rotation);
+
+        sensor.AddObservation(isClosed);
+        sensor.AddObservation(checkpoints[cnt - 1].transform.position);
+        sensor.AddObservation(Vector3.Distance(checkpoints[cnt - 1].transform.position, gameObject.transform.position));
+        sensor.AddObservation(oldDistance - curDistance);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -244,6 +266,8 @@ public class CarAgents : Agent
         float moveAction = actions.ContinuousActions[0];
         float turnAction = actions.ContinuousActions[1];
 
+        //playerController.MovingMachanism(moveAction, turnAction);
+
         Vector3 move = transform.forward * moveAction * speed * Time.fixedDeltaTime;
         carRb.MovePosition(carRb.position + move);
 
@@ -251,18 +275,34 @@ public class CarAgents : Agent
         Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
         carRb.MoveRotation(carRb.rotation * turnRotation);
 
+
         // Reward the agent based on the desired behavior
         // Example of reward shaping:
-        float currentSpeed = carRb.velocity.magnitude;
-        float desiredSpeed = 10f; // Desired minimum speed
-        float speedReward = currentSpeed > desiredSpeed ? 0.1f * (currentSpeed - desiredSpeed) : 0f;
+        float currentSpeed = playerController.rb.velocity.magnitude;
+        float desiredSpeed = 5f; // Desired minimum speed
+        float speedReward = currentSpeed > desiredSpeed ? 0.01f * (currentSpeed - desiredSpeed) : 0f;
         AddReward(speedReward);
 
         // Check if the car is off the track and apply negative reward
         if (IsOffTrack())
         {
             AddReward(-0.1f); // Negative reward for going off-track
-            EndEpisode(); // End the episode when off-track
+            //EndEpisode(); // End the episode when off-track
+        }
+
+        CloseToTarget();
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit_forward))
+        {
+            Debug.DrawRay(transform.position, transform.forward * hit_forward.distance * 2, Color.red);
+        }
+        if (hit_forward.collider.gameObject.CompareTag("CheckPoint"))
+        {
+            AddReward(0.01f);
+        }
+        else
+        {
+            AddReward(-0.001f);
         }
     }
 
@@ -285,4 +325,54 @@ public class CarAgents : Agent
         continuousActionsOut[0] = Input.GetAxis("Vertical");
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.name == "CheckPoint"+cnt)
+        {
+            checkpoints[cnt].enabled = true;
+            checkpoints[cnt - 1].enabled = false;
+            cnt++;
+        }
+    }
+
+    void Init()
+    {
+        GameObject CHK_Points = GameObject.Find("CheckPoints");
+        BoxCollider[] children = CHK_Points.GetComponentsInChildren<BoxCollider>();
+        checkpoints = new BoxCollider[children.Length];
+
+        for (int i = 0; i < children.Length; i++)
+        {
+            checkpoints[i] = children[i];
+            checkpoints[i].enabled = false;
+        }
+        checkpoints[0].enabled = true;
+    }
+
+    void CloseToTarget()
+    {
+        oldDistance = Vector3.Distance(checkpoints[cnt - 1].transform.position, transform.position);
+
+        Invoke("GetDist", 20);
+
+        if(oldDistance > curDistance)
+        {
+            AddReward((oldDistance - curDistance) * 0.03f);
+            isClosed = true;
+        }
+        else if(oldDistance <= curDistance)
+        {
+            AddReward((oldDistance - curDistance) * 0.03f);
+            isClosed = false;
+        }
+    }
+
+    void GetDist()
+    {
+        curDistance = Vector3.Distance(checkpoints[cnt - 1].transform.position, transform.position);
+
+        Debug.Log("CurDIST : " + curDistance + "\nOldDIST : " + oldDistance);
+    }
+
 }
