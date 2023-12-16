@@ -14,13 +14,14 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     public GameObject loadingScreen;
     private Text m_Car_DashBoard;
     private Text m_CountDown;
-    private Text m_CurrentTime;
+    public Text m_CurrentTime;
+    public Text m_LapTime;
     private GameObject m_myCar;
     private Rigidbody m_myCar_rigid;
 
     public float current_time;
     private float m_max_velocity;
-    [SerializeField] private float m_countdown = 20.1f;
+    [SerializeField] private float m_countdown = 7.1f;
     private bool selectedMode = false;
     private bool setting = true;
     private bool loading = false;
@@ -29,6 +30,8 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     private Stopwatch stopwatch;
     private Button select_mode_btn;
     public RectTransform Needle;
+    public PlayerController playerController;
+    public StartLine startline;
 
     // GameDirector에서 구현해야 할 사항들
     /// <summary>
@@ -50,13 +53,18 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     private void Update()
     {
-        if(isStart)
+        if (isStart)
         {
             Needle.rotation = Quaternion.Euler(0, 0, 180 - (m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4) * (float)(0.675));
             if (m_CountDown.text == "0")
             {
                 current_time += Time.deltaTime;
             }
+        }
+
+        if(SceneManager.GetActiveScene().name == "SingleMode")
+        {
+
         }
 
     }
@@ -68,8 +76,11 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         m_CurrentTime = GameObject.Find("CurrentTime").GetComponent<Text>();
         loadingScreen = GameObject.Find("LoadingScreen");
         Needle = GameObject.Find("Needle").GetComponent<RectTransform>();
-
         m_myCar = GameObject.Find("MyCar");
+        playerController = m_myCar.GetComponent<PlayerController>();
+        startline = GameObject.Find("startline").GetComponent<StartLine>();
+        m_LapTime = GameObject.Find("LapTime").GetComponent<Text>();
+
         m_myCar_rigid = m_myCar.GetComponent<Rigidbody>();
         m_max_velocity = 100.0f;
 
@@ -82,7 +93,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     void StartTimer()
     {
-        
+
     }
 
     double EndTimer()
@@ -169,9 +180,21 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
             m_Car_DashBoard.text = ((int)(m_myCar.GetComponent<PlayerController>().mCarData.currentVelocity * 4)).ToString();
 
+            current_time = Math.Abs(playerController.m_countdown);
+
             int hour, minute, second;
+            string str_hour = "00", str_minute = "00", str_second = "00";
+
             hour = ((int)(current_time / 3600)); current_time %= 3600; minute = ((int)(current_time / 60)); second = (int)(current_time % 60);
-            m_CurrentTime.text = /*hour.ToString() + ":" + minute.ToString() + ":" + second.ToString();*/current_time.ToString();
+            if (hour < 10) { str_hour = "0" + hour.ToString(); } else { str_hour = hour.ToString(); }
+            if (minute < 10) { str_minute = "0" + minute.ToString(); } else { str_minute = minute.ToString(); }
+            if (second < 10) { str_second = "0" + second.ToString(); } else { str_second = second.ToString(); }
+
+            if (playerController.m_countdown < 0)
+            {
+                m_CurrentTime.text = str_hour + ":" + str_minute + ":" + str_second; /*current_time.ToString();*/
+            }
+
         }
     }
 
@@ -181,7 +204,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         {
             yield return new WaitForSeconds(0.00001f);
             countdown -= Time.deltaTime;
-            if(countdown < 3)
+            if (countdown < 3)
             {
                 string cur_time = Mathf.Round(countdown).ToString();
                 m_CountDown.text = cur_time;
@@ -195,7 +218,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
                     break;
                 }
             }
-            
+
         }
     }
 

@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // 못움직이게 하는 시간
         m_countdown -= Time.deltaTime;
 
         if(m_countdown > 0)
