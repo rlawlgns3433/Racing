@@ -61,12 +61,6 @@ public class GameDirector : SingletonBehaviour<GameDirector>
                 current_time += Time.deltaTime;
             }
         }
-
-        if(SceneManager.GetActiveScene().name == "SingleMode")
-        {
-
-        }
-
     }
 
     void AnyGameStart()
@@ -163,10 +157,6 @@ public class GameDirector : SingletonBehaviour<GameDirector>
             setting = !setting;
         }
         UnityEngine.Debug.Log(setting);
-    }
-    public void QuitGamePopUp()
-    {
-
     }
 
     IEnumerator DisplayDashBoard()
