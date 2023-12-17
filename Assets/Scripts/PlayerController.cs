@@ -70,10 +70,10 @@ public class PlayerController : MonoBehaviour
         // 바퀴 모델을 태그를 통해서 찾아온다.(차량이 변경되더라도 자동으로 찾기위해서)
         wheelMesh = GameObject.FindGameObjectsWithTag("WheelMesh");
         CheckGrounds = GameObject.FindGameObjectsWithTag("CheckGround");
-        for (int i = 0; i < wheelMesh.Length; i++)
-        {	// 휠콜라이더의 위치를 바퀴메쉬의 위치로 각각 이동시킨다.
-            wheels[i].transform.position = wheelMesh[i].transform.position;
-        }
+        //for (int i = 0; i < wheelMesh.Length; i++)
+        //{	// 휠콜라이더의 위치를 바퀴메쉬의 위치로 각각 이동시킨다.
+        //    wheels[i].transform.position = wheelMesh[i].transform.position;
+        //}
 
         FL_Wheel = GameObject.Find("Wheel_FL").GetComponent<WheelCollider>();
         FR_Wheel = GameObject.Find("Wheel_FR").GetComponent<WheelCollider>();

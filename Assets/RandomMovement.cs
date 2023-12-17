@@ -4,7 +4,7 @@ using UnityEngine.AI;
 public class RandomMovement : MonoBehaviour
 {
     NavMeshAgent agent;
-    Animator animator;
+    public Animator animator;
     bool isMoving = false;
 
     void Start()

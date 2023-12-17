@@ -21,6 +21,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
 
     public float current_time;
     private float m_max_velocity;
+    private int lobbycnt;
     [SerializeField] private float m_countdown = 7.1f;
     private bool selectedMode = false;
     private bool setting = true;
@@ -32,6 +33,8 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     public RectTransform Needle;
     public PlayerController playerController;
     public StartLine startline;
+
+    public Button single_btn, multi_btn, agent_btn, story_btn, garage_btn;
 
     // GameDirector에서 구현해야 할 사항들
     /// <summary>
@@ -49,6 +52,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     {
         DontDestroyOnLoad(gameObject);
         loadingScreen.SetActive(false);
+        lobbycnt = 0;
     }
 
     private void Update()
@@ -60,6 +64,20 @@ public class GameDirector : SingletonBehaviour<GameDirector>
             {
                 current_time += Time.deltaTime;
             }
+        }
+
+        if (SceneManager.GetActiveScene().name == "LobbyScene") 
+        {
+            isStart = false;
+            if(lobbycnt != 0)
+            {
+                InitMode();
+                lobbycnt = 0;
+            }
+        }
+        else
+        {
+            lobbycnt++;
         }
     }
 
@@ -85,44 +103,6 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         isStart = true;
     }
 
-    void StartTimer()
-    {
-
-    }
-
-    double EndTimer()
-    {
-        TimeSpan elapsed = stopwatch.Elapsed;
-        double totalSeconds = elapsed.TotalSeconds;
-
-        double totals = stopwatch.Elapsed.TotalSeconds;
-
-        stopwatch.Reset();
-        return totalSeconds;
-    }
-
-    public void SelectGameMode()
-    {
-        select_mode_btn = GameObject.Find("select_mode").GetComponent<Button>();
-        for (int i = 0; i < GameObject.FindGameObjectsWithTag("mode").Length; i++)
-        {
-            Modes[i] = GameObject.FindGameObjectsWithTag("mode")[i];
-        }
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (Modes[i] != null)
-            {
-                Modes[i].SetActive(!selectedMode);
-            }
-        }
-
-        ColorBlock colorBlock = select_mode_btn.colors; // 모드 선택 버튼 색상
-
-
-        selectedMode = !selectedMode;
-    }
-
     public void StartSingleMode()
     {
         StartCoroutine(loadScene("SingleMode"));
@@ -136,7 +116,7 @@ public class GameDirector : SingletonBehaviour<GameDirector>
     }
     public void StartStoryMode()
     {
-        SceneManager.LoadScene("StoryMode");
+        StartCoroutine(loadScene("StoryMode"));
     }
     public void StartAgentMode()
     {
@@ -237,5 +217,27 @@ public class GameDirector : SingletonBehaviour<GameDirector>
         loadingScreen.SetActive(false);
         SceneManager.LoadScene(SceneName);
         Invoke("AnyGameStart", 1.0f);
+    }
+
+    private void InitMode()
+    {
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("mode").Length; i++)
+        {
+            Modes[i] = GameObject.FindGameObjectsWithTag("mode")[i];
+        }
+
+        settings = GameObject.Find("Settings");
+
+        single_btn = GameObject.Find("SingleMode").GetComponent<Button>();
+        multi_btn = GameObject.Find("MultiMode").GetComponent<Button>();
+        agent_btn = GameObject.Find("AgentMode").GetComponent<Button>();
+        story_btn = GameObject.Find("StoryMode").GetComponent<Button>();
+        garage_btn = GameObject.Find("Garage").GetComponent<Button>();
+
+        single_btn.onClick.AddListener(StartSingleMode);
+        multi_btn.onClick.AddListener(StartMultiMode);
+        agent_btn.onClick.AddListener(StartAgentMode);
+        story_btn.onClick.AddListener(StartStoryMode);
+        garage_btn.onClick.AddListener(EnterGarage);
     }
 }
